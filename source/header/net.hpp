@@ -7,19 +7,13 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include <array>
-#include "layers.h"
+#include "layers.hpp"
+#include "net_constant.h"
 
 
 namespace yogoNNet {
-
-    typedef std::array<size_t, 3> TensorShape;
-
-    struct Tensor
-    {
-        TensorShape shape{{0,0,0}};
-        float* data;
-    };
 
 
     class Net {
@@ -31,7 +25,8 @@ namespace yogoNNet {
             void loadParameters(std::string path);
 
     private:
-        std::vector<Layer> layers_vec_;
+        std::array<Layer*, MAX_LAYER_COUNT> layers_vec_;
+        size_t cur_layer_size_=0;
     };
 }
 

@@ -6,24 +6,42 @@
 #define PEOPLEDETECTIONTEST_LAYERS_H
 
 #include <string>
+#include <array>
+#include <memory>
+#include "net_constant.h"
+
+#ifdef EIGEN
+#define EIGEN_USE_BLAS
+#define EIGEN_USE_LAPACKE
+#define EIGEN_USE_LAPACKE_STRICT
+#include "Eigen/Dense"
+#endif
+
 
 namespace yogoNNet {
 
+    typedef std::array<size_t, 3> TensorShape;
+
+    struct Tensor
+    {
+        TensorShape shape{{0,1,1}};
+        size_t size(){return shape[0] * shape[1] * shape[2];}
+        float* data= nullptr;
+    };
+
     enum LayerTypes{
-        fc,
+        fc=0,
         relu,
     };
 
     class Layer {
     public:
-        Layer(std::string name ,TensorShape inputSize, TensorShape outputSize) : name_(name), input_size_(inputSize), output_size_(outputSize) {
-        };
+        virtual void forward(Tensor& input, Tensor& output)=0;
+        virtual uint8_t types() = 0;
+        TensorShape& inputSize(){return input_size_;}
+        TensorShape& outputSize(){return output_size_;}
 
-        ~Layer();
-
-        virtual void foward(Tensor& input, Tensor& output)=0;
-
-    private:
+    protected:
         TensorShape input_size_;
         TensorShape output_size_;
         std::string name_;
@@ -31,22 +49,31 @@ namespace yogoNNet {
 
     class FCLayer : public Layer {
     public:
-        FCLayer(std::string name, TensorShape inputSize, TensorShape outputSize):Layer(name, inputSize, outputSize) {
-        }
+        FCLayer(){}
+        FCLayer(std::string name, TensorShape inputSize, TensorShape outputSize);
+        ~FCLayer(){}
 
-        ~FCLayer() {};
+        virtual void forward(Tensor& input, Tensor& output);
+        virtual uint8_t types(){ return  int(LayerTypes::fc);};
+        float* weights(){return weights_.get();}
+        float* bias(){ return bias_.get();}
 
-        virtual void foward(Tensor& input, Tensor& output);
+    protected:
+        std::unique_ptr<float> weights_;
+        std::unique_ptr<float> bias_;
+#ifdef EIGEN
+        Eigen::MatrixXf output_mat_;
+#endif
     };
 
     class ReluLayer : public Layer {
     public:
-        ReluLayer(std::string name, TensorShape inputSize, TensorShape outputSize):Layer(name, inputSize, outputSize) {
-        }
+        ReluLayer(){}
+        ReluLayer(std::string name, TensorShape inputSize, TensorShape outputSize);
+        ~ReluLayer() {}
 
-        ~ReluLayer() {};
-
-        virtual void foward(Tensor& input, Tensor& output);
+        virtual void forward(Tensor& input, Tensor& output);
+        virtual uint8_t types(){return int(LayerTypes::relu);}
     };
 }
 
