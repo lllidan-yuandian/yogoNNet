@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.2)
 
-set(CMAKE_BUILD_TYPE "Debug")
-add_definitions("-Wall -g")
+set(CMAKE_BUILD_TYPE "Release")
+set(CMAKE_CXX_FLAGS "-std=c++11 -O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_C_FLAGS_RELEASE "-O3")
+
+#add_definitions("-Wall -g")
 if(OPENMP_FOUND)
     message("OPENMP FOUND")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")

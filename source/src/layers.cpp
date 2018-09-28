@@ -23,9 +23,11 @@ yogoNNet::FCLayer::FCLayer(std::string name, yogoNNet::TensorShape inputSize, yo
 void yogoNNet::FCLayer::forward(yogoNNet::Tensor &input, yogoNNet::Tensor &output) {
 
 #ifdef EIGEN
-    Eigen::MatrixXf input_mat = Eigen::Map<Eigen::MatrixXf>(input.data, input.shape[0], input.shape[1]);
-    Eigen::MatrixXf weight_mat = Eigen::Map<Eigen::MatrixXf>(weights(), input.shape[0], output.shape[1]);
-    output_mat_ = input_mat*weight_mat;
+    Eigen::MatrixXf input_mat = Eigen::Map<Eigen::MatrixXf>(input.data, input_size_[0], input_size_[1]);
+    Eigen::MatrixXf weight_mat = Eigen::Map<Eigen::MatrixXf>(weights(), output_size_[0], input_size_[0]);
+    Eigen::MatrixXf bias_mat = Eigen::Map<Eigen::MatrixXf>(bias(),  output_size_[0], 1);
+    output_mat_ = weight_mat*input_mat + bias_mat;
+    output.shape = output_size_;
     output.data = output_mat_.data();
 #endif
 }
@@ -45,6 +47,7 @@ void yogoNNet::ReluLayer::forward(yogoNNet::Tensor &input, yogoNNet::Tensor &out
     for (int i = 0; i < size; ++i) {
         input.data[i] = std::max(input.data[i], .0f);
     }
+    output.shape = output_size_;
     output.data=input.data;
 }
 

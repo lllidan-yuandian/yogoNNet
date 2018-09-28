@@ -5,6 +5,8 @@
 #include "yogoNNet.h"
 using namespace yogoNNet;
 
+#include <iostream>
+
 int main(int code){
 
     Net laserNet;
@@ -22,15 +24,21 @@ int main(int code){
 
 
     Tensor input_tensor;
-    input_tensor.data = (float*)malloc(sizeof(float)*i_shape[0]*i_shape[1]*i_shape[2]);
-    float a = -5;
-    float b = 5;
+    input_tensor.shape={256,1,1};
+    input_tensor.data = new float[i_shape[0]*i_shape[1]*i_shape[2]];
     for (int i = 0; i < i_shape[0] * i_shape[1] * i_shape[2]; ++i) {
-        input_tensor.data[i] = a + (int)b * rand() / (RAND_MAX + 1);
+        input_tensor.data[i] = 0.1f;
     }
 
     Tensor result;
-    laserNet.runNet(input_tensor, result);
-
+    clock_t  start_c, end_c;
+    start_c = clock();
+    for (int j = 0; j < 20; ++j) {
+        laserNet.runNet(input_tensor, result);
+    }
+    end_c = clock();
+    std::cout<<"elapse time:"<<(double)(end_c - start_c)/CLOCKS_PER_SEC<<std::endl;
+    std::cout<<result.data[0]<<","<<result.data[1]<<std::endl;
+    delete [] input_tensor.data;
     return 0;
 }

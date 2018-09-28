@@ -22,12 +22,16 @@ yogoNNet::Net::~Net(){
 
 }
 
-bool yogoNNet::Net::runNet(yogoNNet::Tensor input, yogoNNet::Tensor out) {
+bool yogoNNet::Net::runNet(yogoNNet::Tensor& input, yogoNNet::Tensor& out) {
 
+    Tensor outTensor;
     for (int i = 0; i < cur_layer_size_; ++i) {
-        layers_vec_[i]->forward(input,out);
-        input = out;
+        layers_vec_[i]->forward(input,outTensor);
+        input.shape = outTensor.shape;
+        input.data = outTensor.data;
     }
+    out.data = outTensor.data;
+    out.shape = outTensor.shape;
 }
 
 void yogoNNet::Net::addLayer(std::string name, LayerTypes type, TensorShape inputSize, TensorShape outputSize)

@@ -20,7 +20,7 @@ namespace yogoNNet {
         public:
             Net();
             ~Net();
-            bool runNet(Tensor input, Tensor out);
+            bool runNet(Tensor& input, Tensor& out);
             void addLayer(std::string name, LayerTypes type, TensorShape inputSize, TensorShape outputSize);
             void loadParameters(std::string path);
 
