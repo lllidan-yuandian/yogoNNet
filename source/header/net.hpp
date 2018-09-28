@@ -25,7 +25,7 @@ namespace yogoNNet {
             void loadParameters(std::string path);
 
     private:
-        std::array<Layer*, MAX_LAYER_COUNT> layers_vec_;
+        std::array<std::shared_ptr<Layer>, MAX_LAYER_COUNT> layers_vec_;
         size_t cur_layer_size_=0;
     };
 }

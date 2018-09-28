@@ -30,15 +30,15 @@ int main(int code){
         input_tensor.data[i] = 0.1f;
     }
 
-    Tensor result;
     clock_t  start_c, end_c;
     start_c = clock();
-    for (int j = 0; j < 20; ++j) {
+    Tensor result;
+    for (int j = 0; j < 30; ++j) {
         laserNet.runNet(input_tensor, result);
     }
+    std::cout<<result.data[0]<<","<<result.data[1]<<std::endl;
     end_c = clock();
     std::cout<<"elapse time:"<<(double)(end_c - start_c)/CLOCKS_PER_SEC<<std::endl;
-    std::cout<<result.data[0]<<","<<result.data[1]<<std::endl;
     delete [] input_tensor.data;
     return 0;
 }
